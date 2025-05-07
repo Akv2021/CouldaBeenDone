@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CouldaBeenDone: Turn Wasted Time into "What-If" Productivity</title>
+    <style>
+        /* Base styles */
+        body {
+            background-color: #1f1f1f;
+            color: white;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            text-align: center;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Content wrapper */
+        .content-wrapper {
+            padding-top: 200px;
+            width: 85%;
+            max-width: 1200px;
+            margin: 0 auto;
+            transition: padding-top 0.3s ease;
+        }
+
+        /* Floating container */
+        .floating-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(31, 31, 31, 0.95);
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        /* Header styles */
+        h1 {
+            font-size: 2.5em;
+            color: #64B5F6;
+            margin: 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        /* Timer and controls wrapper */
+        .timer-controls-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Timer display */
+        #timer {
+            font-size: 4em;
+            padding: 20px;
+            background: linear-gradient(145deg, #2a2a2a, #333);
+            border-radius: 15px;
+            min-width: 250px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            font-weight: 600;
+            color: #FF9800;
+            border: 2px solid rgba(255, 152, 0, 0.2);
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+        }
+
+        /* Controls container */
+        .controls-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        /* Button container */
+        .button-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Button styles */
+        button {
+            background: linear-gradient(145deg, #444, #333);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            background: linear-gradient(145deg, #555, #444);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        button.clicked {
+            background: linear-gradient(145deg, #FF9800, #F57C00);
+            transform: translateY(1px);
+        }
+
+        button.reset {
+            background: linear-gradient(145deg, #d32f2f, #c62828);
+        }
+
+        /* Checkbox container */
+        .checkbox-container {
+            font-size: 1em;
+            color: #90CAF9;
+            padding: 8px 15px;
+            background: rgba(41, 121, 255, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(144, 202, 249, 0.2);
+            white-space: nowrap;
+        }
+
+        /* Tasklist styles */
+        .tasklist {
+            background: linear-gradient(145deg, #2a2a2a, #252525);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 30px auto;
+            text-align: left;
+            width: 100%;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .all-tasklist-title {
+            font-size: 2em;
+            margin: 20px 0;
+            color: #64B5F6;
+            text-align: center;
+            font-weight: bold;
+            padding: 15px;
+            border-bottom: 2px solid rgba(100, 181, 246, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .tasklist-container {
+            border: 2px solid #444;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            background-color: rgba(51, 51, 51, 0.5);
+        }
+
+        .tasklist-title {
+            font-size: 1.5em;
+            margin: 15px 0;
+            color: #90CAF9;
+            font-weight: bold;
+            padding: 10px;
+            border-bottom: 1px solid rgba(144, 202, 249, 0.3);
+            letter-spacing: 1px;
+        }
+
+        /* Task item styles */
+        .task-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .task-item.not-started {
+            background: linear-gradient(145deg, #616161, #424242);
+        }
+
+        .task-item.in-progress {
+            background: linear-gradient(145deg, #1976D2, #1565C0);
+            border: 1px solid rgba(25, 118, 210, 0.3);
+        }
+
+        .task-item.completed {
+            background: linear-gradient(145deg, #43A047, #388E3C);
+            border: 1px solid rgba(67, 160, 71, 0.3);
+        }
+
+        /* Idle time display */
+        #idleTime {
+            background: linear-gradient(145deg, #2a2a2a, #333);
+            color: #FFB74D;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 30px auto;
+            font-style: italic;
+            font-size: 1.3em;
+            width: 100%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(255, 183, 77, 0.2);
+            box-sizing: border-box;
+        }
+
+        /* Utility class */
+        .hidden {
+            display: none;
+        }
+
+        /* Media query for responsiveness */
+        @media (max-width: 768px) {
+            .timer-controls-wrapper {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .controls-container {
+                align-items: center;
+            }
+
+            #timer {
+                font-size: 3em;
+                padding: 15px;
+                min-width: 200px;
+            }
+
+            .content-wrapper {
+                width: 95%;
+                padding-top: 250px;
+            }
+
+            button {
+                padding: 10px 20px;
+                font-size: 0.9em;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="floating-container">
+        <h1>CouldaBeenDone</h1>
+        <div class="timer-controls-wrapper">
+            <div id="timer">00:00</div>
+            <div class="controls-container">
+                <div class="button-container">
+                    <button id="startButton">Start</button>
+                    <button id="pauseButton">Pause</button>
+                    <button id="resetButton" class="reset">Reset</button>
+                </div>
+                <div class="checkbox-container">
+                    <input type="checkbox" id="showUpcoming"> Show Upcoming Activities
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-wrapper">
+        <div id="completedActivities" class="tasklist hidden">
+            <div id="activityList"></div>
+        </div>
+        <div id="idleTime" class="hidden"></div>
+    </div>
+
+    <script>
+        // Activity data
+        const activityLists = [
+            {
+                title: "Productive Time",
+                activities: [
+                { title: "Read a chapter", duration: "00:20:00" },
+                { title: "Quick workout", duration: "00:15:00" },
+                { title: "Learn a new skill", duration: "00:30:00" }
+                ]
+            },
+            {
+                title: "Relaxation",
+                activities: [
+                { title: "Meditate", duration: "00:10:00" },
+                { title: "Listen to a podcast", duration: "00:25:00" }
+                ]
+            }
+        ];
+
+        // Global variables
+        let timerInterval = null;
+        let elapsedTime = 0;
+        let isRunning = false;
+
+        // DOM Elements
+        const startButton = document.getElementById('startButton');
+        const pauseButton = document.getElementById('pauseButton');
+        const resetButton = document.getElementById('resetButton');
+        const timerDisplay = document.getElementById('timer');
+        const showUpcomingCheckbox = document.getElementById('showUpcoming');
+
+        // Timer functions
+        function startTimer() {
+            if (isRunning) return;
+
+            isRunning = true;
+            startButton.classList.add('clicked');
+            pauseButton.classList.remove('clicked');
+            resetButton.classList.remove('clicked');
+
+            timerInterval = setInterval(() => {
+                elapsedTime++;
+                updateTimerDisplay();
+                updateActivityList();
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            if (!isRunning) return;
+
+            isRunning = false;
+            clearInterval(timerInterval);
+            timerInterval = null;
+
+            pauseButton.classList.add('clicked');
+            startButton.classList.remove('clicked');
+            resetButton.classList.remove('clicked');
+
+            updateActivityList();
+        }
+
+        function resetTimer() {
+            isRunning = false;
+            clearInterval(timerInterval);
+            timerInterval = null;
+            elapsedTime = 0;
+
+            updateTimerDisplay();
+            document.getElementById('idleTime').classList.add('hidden');
+
+            startButton.classList.remove('clicked');
+            pauseButton.classList.remove('clicked');
+            resetButton.classList.remove('clicked');
+
+            updateActivityList();
+        }
+
+        function updateTimerDisplay() {
+            timerDisplay.textContent = secondsToTime(elapsedTime);
+        }
+
+        // Time conversion functions
+        function timeToSeconds(time) {
+            const [hours = 0, minutes = 0, seconds = 0] = time.split(':').map(Number);
+            return hours * 3600 + minutes * 60 + seconds;
+        }
+
+        function secondsToTime(totalSeconds) {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+
+            if (hours > 0) {
+                return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+            return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Update the activity list
+        function updateActivityList() {
+            const activityListElement = document.getElementById('activityList');
+            activityListElement.innerHTML = '<div class="all-tasklist-title">Activities You Could Have Done</div>';
+            let timeLeft = elapsedTime;
+            const showUpcoming = showUpcomingCheckbox.checked;
+
+            activityLists.forEach(list => {
+                let listHtml =
+                `<div class="tasklist-container"><div class="tasklist-title">${list.title}</div>`;
+                let hasVisibleActivities = false;
+
+                list.activities.forEach(activity => {
+                    const activityDuration = timeToSeconds(activity.duration);
+                    let activityState = 'not-started';
+                    let emoji = '▶️';
+                    let progressText = activity.duration;
+
+                    if (timeLeft >= activityDuration) {
+                        activityState = 'completed';
+                        emoji = '✅';
+                        timeLeft -= activityDuration;
+                    } else if (timeLeft > 0) {
+                        activityState = 'in-progress';
+                        emoji = '⏳';
+                        const progress = (timeLeft / activityDuration) * 100;
+                        progressText = `${Math.min(100, Math.max(0, progress.toFixed(0)))}%`;
+                        timeLeft = 0;
+                    }
+
+                    if (showUpcoming || activityState !== 'not-started') {
+                        hasVisibleActivities = true;
+                        listHtml += `
+              <div class="task-item ${activityState}">
+                <span class="task-title">${activity.title}</span>
+                <span class="task-duration"><span class="emoji">${emoji}</span> ${progressText}</span>
+              </div>`;
+                    }
+                });
+
+                listHtml += '</div>';
+                if (hasVisibleActivities) {
+                    activityListElement.innerHTML += listHtml;
+                }
+            });
+
+            const completedActivitiesElement = document.getElementById('completedActivities');
+            completedActivitiesElement.classList.toggle('hidden', !(elapsedTime > 0 || showUpcoming));
+
+            const idleTimeElement = document.getElementById('idleTime');
+            if (timeLeft > 0) {
+                idleTimeElement.classList.remove('hidden');
+                idleTimeElement.textContent = `You could have been productive for another ${secondsToTime(timeLeft)}.`;
+            } else {
+                idleTimeElement.classList.add('hidden');
+            }
+        }
+
+        // Shrink header on scroll
+        function handleScroll() {
+            const floatingContainer = document.querySelector('.floating-container');
+            const title = document.querySelector('h1');
+            const timer = document.getElementById('timer');
+            const contentWrapper = document.querySelector('.content-wrapper');
+
+            if (window.scrollY > 50) {
+                floatingContainer.style.padding = '5px 0';
+                title.style.fontSize = '1.8em';
+                timer.style.fontSize = '3em';
+                timer.style.padding = '15px';
+                contentWrapper.style.paddingTop = '180px';
+            } else {
+                floatingContainer.style.padding = '15px 0';
+                title.style.fontSize = '2.5em';
+                timer.style.fontSize = '4em';
+                timer.style.padding = '20px';
+                contentWrapper.style.paddingTop = '200px';
+            }
+        }
+
+        // Initialize
+        function initialize() {
+            // Add event listeners
+            window.addEventListener('scroll', handleScroll);
+            showUpcomingCheckbox.addEventListener('change', updateActivityList);
+            startButton.addEventListener('click', startTimer);
+            pauseButton.addEventListener('click', pauseTimer);
+            resetButton.addEventListener('click', resetTimer);
+
+            // Initial update
+            updateActivityList();
+        }
+
+        // Wait for DOM to load before initializing
+        document.addEventListener('DOMContentLoaded', initialize);
+    </script>
+</body>
+
+</html>
